@@ -30,7 +30,14 @@ df = pd.read_csv(args.depth, sep="\t", names=colNames)
 
 #df.plot(x="pos", y="depth")
 grouped = df.groupby('contig')
-fig, axs = plt.subplots(len(grouped))
+numGroups = len(grouped)
+if(numGroups == 0):
+    print("No reads map to this contig.")
+    exit(0)
+print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",numGroups)
+fig, axs = plt.subplots(numGroups)
+if(type(axs) != type([])):
+    axs = [axs]
 counter = 0
 for key, group in grouped:
     print(key)
