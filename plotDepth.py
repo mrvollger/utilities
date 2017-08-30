@@ -34,7 +34,7 @@ numGroups = len(grouped)
 if(numGroups == 0):
     print("No reads map to this contig.")
     exit(0)
-print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",numGroups)
+
 fig, axs = plt.subplots(numGroups)
 if(type(axs) != type([])):
     axs = [axs]
