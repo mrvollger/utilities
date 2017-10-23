@@ -26,6 +26,7 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 import h5py
 import numpy as np
+import pandas as pd
 import multiprocessing as mp
 # global varibles
 
@@ -168,22 +169,28 @@ def h5Lengths(h5):
     os.system("rm ForReadLengthTemp.fasta")
     '''
 
+def bedLengths(bed):
+	bed = pd.read_csv(bed, sep="\t", header=None)
+	names = list(bed.index)
+	lengths = list(bed[2] - bed[1])
+	return(printLengths(names, lengths))
+
 def detectAndRun(readFile):
-    readFileL = readFile.split(".")
-    length = len(readFileL)
-    ftype = readFileL[length -1]
-    rtn = (readFile) + "\n"
-    if(ftype == "fa" or ftype == "fasta"):
-        names, lengths = fastaLengths(readFile)
-        rtn += printLengths(names,lengths)
-    
-    elif(ftype == "h5" ):
-        rtn += h5Lengths(readFile)
-    
-    elif(ftype == "fofn"):
-        print("does not supported nested FOFNs")
-        #rtn += multiFiles(readFile)
-    return(rtn)
+	readFileL = readFile.split(".")
+	length = len(readFileL)
+	ftype = readFileL[length -1]
+	rtn = (readFile) + "\n"
+	if(ftype == "fa" or ftype == "fasta"):
+		names, lengths = fastaLengths(readFile)
+		rtn += printLengths(names,lengths)
+	elif(ftype == "h5" ):
+		rtn += h5Lengths(readFile)
+	elif(ftype == "bed" ):
+		rtn += bedLengths(readFile)
+	elif(ftype == "fofn"):
+		print("does not supported nested FOFNs")
+		#rtn += multiFiles(readFile)
+	return(rtn)
 
 def expandFofnsInList( mylist ):
     expandedList = []
