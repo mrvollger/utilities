@@ -161,7 +161,7 @@ if(args.sam is not None):
 			y = counter * max_y/(len(queries)*3)
 			read = reads[query]
 			end = squaresFromCigar(ax, read.cigar, read.reference_start, y , height)
-			assert(end == read.reference_end)
+			#assert(end == read.reference_end)
 			label="{}:{}-{};{};{}".format(query, read.query_alignment_start, read.query_alignment_end, 
 					read.is_reverse, read.infer_query_length())
 			ax.text(read.reference_start, y, label)

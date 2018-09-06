@@ -6,7 +6,7 @@ parser.add_argument("--fasta", help="reads file fasta")
 parser.add_argument("--h5", help="reads h5 file")
 parser.add_argument("--fofn", help="file of bas/bax.h5 files")
 parser.add_argument("--printn", help="print the lenght of the first n reads", default="0")
-#parser.add_argument('--selfMap', help="map the bac assmbly to itsefl", action='store_true')
+parser.add_argument('--hist', help="print a histogram of the lengths", action='store_true')
 #parser.set_defaults(selfMap=False)
 args = parser.parse_args()
 
@@ -21,6 +21,7 @@ printn = int(args.printn)
 import glob
 import subprocess
 import os
+import pysam
 import re
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -104,9 +105,11 @@ def printLengths(names, lengths):
         if(sofar >= totalseq/2 ):
             N50 = seq 
             break
-    
-     
-    rtn =  (printLater + s_hist[:-1]) + "\n"
+    rtn = ""
+    if(args.hist):
+        rtn =  (printLater + s_hist[:-1]) + "\n"
+    else:
+        rtn =  (printLater) 
     rtn += ("Number of sequences:\t{}".format(totalseqs)) + "\n"
     rtn += ("Total number of bases:\t{}".format(totalseq))+ "\n"
     rtn += ("Average Length:\t{0:.2f}".format(averageLen))+ "\n"
@@ -175,6 +178,16 @@ def bedLengths(bed):
 	lengths = list(bed[2] - bed[1])
 	return(printLengths(names, lengths))
 
+def bamLengths(bam):
+	samfile = pysam.AlignmentFile(bam)
+	names = []
+	lengths = []
+	for read in samfile.fetch(until_eof=True):
+		names.append(read.query_name)
+		lengths.append(read.infer_query_length())
+	return(printLengths(names, lengths))
+
+
 def detectAndRun(readFile):
 	readFileL = readFile.split(".")
 	length = len(readFileL)
@@ -187,6 +200,8 @@ def detectAndRun(readFile):
 		rtn += h5Lengths(readFile)
 	elif(ftype == "bed" ):
 		rtn += bedLengths(readFile)
+	elif(ftype == "bam" or ftype == "sam"):
+		rtn += bamLengths(readFile)
 	elif(ftype == "fofn"):
 		print("does not supported nested FOFNs")
 		#rtn += multiFiles(readFile)
