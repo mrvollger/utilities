@@ -97,7 +97,7 @@ if(args.plot is not None):
 	fig, ax = plt.subplots(figsize=(16,9))
 
 	if(args.plotwith is not None):
-		df = pd.read_csv(plotwith, sep="\t", header=None, names=["name", "length"])
+		df = pd.read_csv(args.plotwith, sep="\t", header=None, names=["name", "length"])
 	elif(flat_list is not None):
 		df = pd.DataFrame(flat_list, columns=["name", "length"])
 	else:

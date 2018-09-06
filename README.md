@@ -41,14 +41,7 @@ optional arguments:
                         number of threads to use, only used in reading in
                         fasta/fastq files
 ```
-
-
-
-
-
-
-
-
+![alt text](pngs/readlendist.png?raw=true "Example Read Length Distribution")
 
 
 
