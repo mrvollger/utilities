@@ -132,6 +132,7 @@ if(args.plot is not None):
 	plt.xticks(xts, xls)
 	Gb = sum(df["length"])/1000000000
 	plt.xlabel("Length (kbp), Total Gb {:.2f}".format(Gb))
+	plt.ylabel("Number of reads")
 	plt.savefig(args.plot)
 
 
