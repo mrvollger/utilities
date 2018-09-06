@@ -19,6 +19,7 @@ source conda.cfg
 
 ## SeqLengths.py ##
 ```
+SeqLengths.py --help
 usage: SeqLengths.py [-h] [-f FOFN] [-o OUT] [-p PLOT] [--plotwith PLOTWITH]
                      [-t THREADS]
                      [infiles [infiles ...]]
