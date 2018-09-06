@@ -2,14 +2,13 @@
 import argparse
 import sys
 
-parser = argparse.ArgumentParser(description="")
+parser = argparse.ArgumentParser(description="Get the lengths of reads from fasta/fastq/(.gz) files.")
 parser.add_argument("infiles", nargs="*", help="input fasta/fastq file")
-parser.add_argument("-f", "--fofn", help="input FOFN of fasta/fastq files")
-parser.add_argument("-o", "--out", help="output lengths file", type=argparse.FileType('w'), default=sys.stdout)
-parser.add_argument('-d', action="store_true", default=False)
-parser.add_argument('-p',"--plot", default=None,help="file the make histogram plot in")
-parser.add_argument("--plotwith", default=None,help="plot with a list of lengths")
-parser.add_argument('-t', "--threads", type=int, default=1)
+parser.add_argument("-f", "--fofn", help="input FOFN of fasta/fastq files, replaces infiles argument")
+parser.add_argument("-o", "--out", help="output lengths file. Has the form: readname, length", type=argparse.FileType('w'), default=sys.stdout)
+parser.add_argument('-p',"--plot", default=None,help="Specify a place to plot a hsitogram of read lengths")
+parser.add_argument("--plotwith", default=None,help="If you have already calcualted readlength before you can specify plotwith to avoid rereading the fasta files")
+parser.add_argument('-t', "--threads", type=int, default=1, help="number of threads to use, only used in reading in fasta/fastq files")
 args = parser.parse_args()
 
 
