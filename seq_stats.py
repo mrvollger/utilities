@@ -115,7 +115,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	threads = min(args.threads, len(args.infiles))
-	sys.stdout.write("file\ttotalBp\tnSeqs\tmean\tmedian\tN50\n")
+	out = "file\ttotalBp\tnSeqs\tmean\tmedian\tN50\n"
 	with multiprocessing.Pool(threads) as pool: 
 		for i, rtn in enumerate(pool.imap(get_lengths, args.infiles)):
 			total, nseqs, mean, median, N50 = calc_stats(rtn[1]) 
@@ -124,7 +124,8 @@ if __name__ == "__main__":
 				out_fmt = f"{f}\t{h_fmt(total)}\t{nseqs}\t{h_fmt(mean)}\t{h_fmt(median)}\t{h_fmt(N50)}\n"
 			else:
 				out_fmt = f"{f}\t{total}\t{nseqs}\t{mean}\t{median}\t{N50}\n"
+			out += out_fmt
 
-			sys.stdout.write(out_fmt.format(f))
+	sys.stdout.write(out)
 
 	
