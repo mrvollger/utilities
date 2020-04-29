@@ -13,44 +13,71 @@ args = parser.parse_args()
 
 
 from Bio import SeqIO
+import pysam 
 import gzip
-import mimetypes
 from multiprocessing.dummy import Pool as ThreadPool 
-pool = ThreadPool(args.threads)
+#from tqdm import tqdm
+poses = {}
+pos = 0
 
+def getDesc(f,ftype):
+	desc = "\033[92mFile:{} File Type:{} Progres\033[0m".format(f.name, ftype)
+	return(desc)
 
-
+def getPos(f):
+	global poses, pos
+	if(f.name not in poses):
+		pos += 1 #position for the tqdm display.
+		poses[f.name] = pos
+	return(poses[f.name])
+	
 def readSeqs(f, ftype):
 	lengths = []
-	for rec in SeqIO.parse(f, ftype):
-		lengths.append( (rec.name, len(rec.seq)) )
+	if(ftype in ["fasta", "fastq"]):
+		#recs = list(SeqIO.parse(f,ftype))
+		#for rec in tqdm(SeqIO.parse(f,ftype), position=pos, desc=getDesc(f,ftype)):
+		for rec in (SeqIO.parse(f,ftype)):
+			lengths.append( (rec.name, len(rec.seq)) )
+	elif(ftype in ["bam"]):
+		bamfile = pysam.AlignmentFile(f,check_sq=False)
+		#for read in tqdm(bamfile.fetch(until_eof=True), desc=getDesc(f,ftype), position=getPos(f)):
+		for read in (bamfile.fetch(until_eof=True)):
+			lengths.append((read.query_name, read.infer_query_length()))
+	elif(ftype in ["bed"]):
+		#for line in tqdm(f.readlines(), desc=getDesc(f,ftype), position=getPos(f)):
+		for line in (f.readlines()):
+			line=line.split()
+			name,start,end = line[0], int(line[1]), int(line[2])
+			lengths.append( (name, end-start) )
 	return(lengths)
 
 #for seqfile in args.infiles:
 def readFile(seqfile):
-	#mime = mimetypes.guess_type(seqfile)
-	#print(mime)
+	# get file type 
+	ftype = None
+	tags = seqfile.split(".")
+	if(   ("fasta" in tags) or ("fa" in tags)):
+		ftype = "fasta"
+	elif( ("fastq" in tags) or ("fq" in tags)):
+		ftype = "fastq"
+	elif( (seqfile[-4:] == ".bam") or (seqfile[-4:] == ".sam") ):
+		ftype = "bam"
+	elif( (seqfile[-4:] == ".bed")):
+		ftype = "bed"
+	assert ftype is not None, "File type unknown"
+	
+	# uncompress if needed 
 	if(seqfile[-3:] == ".gz"):
 		f = gzip.open(seqfile, 'rt')
 	else:
 		f = open(seqfile)
 	
-	# get file type 
-	ftype = None
-	tags = seqfile.split(".")
-	if("fasta" in tags):
-		ftype = "fasta"
-	elif("fastq" in tags):
-		ftype = "fastq"
-	elif("fq" in tags):
-		ftype = "fastq"
-	elif("fa" in tags):
-		ftype = "fasta"
-	assert ftype is not None, "File type unknown"
-	print("File:{}\tFile Type:{}".format(seqfile, ftype))
-
+	# get read lengths 
 	lengths = readSeqs(f, ftype)
+	# clsoe read file
 	f.close()
+	
+	print("\033[92mRead {} reads in {}\033[0m".format(len(lengths), seqfile), file = sys.stderr)
 	return(lengths)
 
 def NX(nums, X):
@@ -72,7 +99,14 @@ if(args.plotwith is None):
 		myfiles = []
 		for line in open(args.fofn).readlines():
 			myfiles.append(line.strip())
+
+	# create pool of to thread process.
+	threads = min(args.threads, len(myfiles))
+	pool = ThreadPool(threads)
+	print("\033[92mUsed Threads:{}\033[0m".format(threads), file = sys.stderr)
 	lengths = pool.map(readFile, myfiles)
+	# output buffer aorund tqdm lines 
+	print(pos*"\n", file=sys.stderr)	
 
 	flat_list = []
 	for l in lengths:
@@ -106,7 +140,12 @@ if(args.plot is not None):
 	df["LogLength"]=np.log10( np.clip(df["length"],10,None) )
 
 	# make histogram	
-	sns.distplot(df.LogLength, bins=100, kde=False, rug=False, ax=ax)
+	g=sns.distplot(df.LogLength, bins=100, kde=False, rug=False, ax=ax)
+	#print(g)
+	vv, ll =  np.histogram(df.LogLength, bins=1000 ) 
+	for v, l in zip(vv, ll):
+		if( 10**l > 14000 and 10**l < 18000 ):
+			print(v, 10**l)
 
 	# get maxes
 	myy = plt.gca().get_ylim()[1]
@@ -120,7 +159,7 @@ if(args.plot is not None):
 	for name, val, div in zip(names, vals, divs):
 		plt.axvline(x=np.log10(val), color="darkred", linestyle="dashed")
 		label = "{}={}".format(name, round(val/1000, 1))
-		plt.text(np.log10(val)+.01, myy*div, label, fontsize=16)
+		plt.text(np.log10(val)+.01, myy*div, label, fontsize=18)
 	
 	# make x ticks 	
 	xts = [2,3,4,5,6,7]

@@ -12,7 +12,7 @@ args = parser.parse_args()
 
 from Bio import SeqIO
 import numpy as np
-Cutoff = 1000000000000000000000000000000
+Cutoff = 0
 # input setup
 reads_dict = SeqIO.to_dict(SeqIO.parse(args.infasta, "fasta"))
 length_dict = {}

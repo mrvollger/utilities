@@ -88,7 +88,9 @@ def calc_stats(lengths, x=50):
 	n = len(lengths)
 	total = sum(lengths)
 	lens = sorted(lengths)
+	mmax = lens[-1]
 	mean = total/n
+	auN = sum([x*x for x in lens])/total 
 	if(n % 2 == 0): 
 		median = (lens[n//2] + lens[n//2-1])/2
 	else: 
@@ -97,7 +99,7 @@ def calc_stats(lengths, x=50):
 	for l in lens:
 		count += l
 		if( count >= total * (x/100) ):
-			return( (total, n, mean, median, l))
+			return( (total, n, mean, median, mmax, l, auN))
 
 def h_fmt(num):
 	for unit in ['','Kbp','Mbp']:
@@ -115,15 +117,15 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	threads = min(args.threads, len(args.infiles))
-	out = "file\ttotalBp\tnSeqs\tmean\tmedian\tN50\n"
+	out = "file\ttotalBp\tnSeqs\tmean\tmedian\tmax\tN50\tauN\n"
 	with multiprocessing.Pool(threads) as pool: 
 		for i, rtn in enumerate(pool.imap(get_lengths, args.infiles)):
-			total, nseqs, mean, median, N50 = calc_stats(rtn[1]) 
+			total, nseqs, mean, median, mmax, N50, auN = calc_stats(rtn[1]) 
 			f = args.infiles[i]
 			if(args.human):
-				out_fmt = f"{f}\t{h_fmt(total)}\t{nseqs}\t{h_fmt(mean)}\t{h_fmt(median)}\t{h_fmt(N50)}\n"
+				out_fmt = f"{f}\t{h_fmt(total)}\t{nseqs}\t{h_fmt(mean)}\t{h_fmt(median)}\t{h_fmt(mmax)}\t{h_fmt(N50)}\t{h_fmt(auN)}\n"
 			else:
-				out_fmt = f"{f}\t{total}\t{nseqs}\t{mean}\t{median}\t{N50}\n"
+				out_fmt = f"{f}\t{total}\t{nseqs}\t{mean}\t{median}\t{mmax}\t{N50}\t{auN}\n"
 			out += out_fmt
 
 	sys.stdout.write(out)

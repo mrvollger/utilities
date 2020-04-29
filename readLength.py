@@ -25,7 +25,7 @@ import pysam
 import re
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-import h5py
+
 import numpy as np
 import pandas as pd
 import multiprocessing as mp
@@ -197,6 +197,7 @@ def detectAndRun(readFile):
 		names, lengths = fastaLengths(readFile)
 		rtn += printLengths(names,lengths)
 	elif(ftype == "h5" ):
+		import h5py
 		rtn += h5Lengths(readFile)
 	elif(ftype == "bed" ):
 		rtn += bedLengths(readFile)
