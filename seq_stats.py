@@ -49,6 +49,9 @@ def read_bam(f):
 		return(None)
 
 def read_index(f):
+	if( os.path.exists(f + ".fai") and os.path.getmtime(f) > os.path.getmtime(f + ".fai") ):
+		sys.stderr.write(f"Index is older than {f}. Remake the index for fast stats.\n" )
+		return(None)
 	try:
 		index = pysam.FastaFile(f)
 		names = index.references
@@ -84,10 +87,13 @@ def get_lengths(f):
 	return(rtn)
 
 
-def calc_stats(lengths, x=50):
+def calc_stats(lengths, x=50, gsize = None):
 	n = len(lengths)
-	total = sum(lengths)
-	lens = sorted(lengths)
+	if(gsize is None):
+		total = sum(lengths)
+	else: 
+		total = gsize 
+	lens = sorted(lengths)[::-1]
 	mmax = lens[-1]
 	mean = total/n
 	auN = sum([x*x for x in lens])/total 
@@ -99,7 +105,7 @@ def calc_stats(lengths, x=50):
 	for l in lens:
 		count += l
 		if( count >= total * (x/100) ):
-			return( (total, n, mean, median, mmax, l, auN))
+			return( (sum(lengths), n, mean, median, mmax, l, auN))
 
 def h_fmt(num):
 	for unit in ['','Kbp','Mbp']:
@@ -113,6 +119,7 @@ if __name__ == "__main__":
 	parser.add_argument("infiles", nargs="+", help="fast{a,q}(.gz), sam, or bam inputs as a list.")
 	parser.add_argument("-t", "--threads", help="Number of threads to use", type=int, default=4)
 	parser.add_argument("-r", "--human", help="print human readable",  action="store_true", default=False)
+	parser.add_argument('-g', help="calculate NG50, provide genome size, for hg use 3098794149 ", type=int, default=None)
 	parser.add_argument('-d', help="store args.d as true if -d",  action="store_true", default=False)
 	args = parser.parse_args()
 	
@@ -120,7 +127,7 @@ if __name__ == "__main__":
 	out = "file\ttotalBp\tnSeqs\tmean\tmedian\tmax\tN50\tauN\n"
 	with multiprocessing.Pool(threads) as pool: 
 		for i, rtn in enumerate(pool.imap(get_lengths, args.infiles)):
-			total, nseqs, mean, median, mmax, N50, auN = calc_stats(rtn[1]) 
+			total, nseqs, mean, median, mmax, N50, auN = calc_stats(rtn[1], gsize=args.g) 
 			f = args.infiles[i]
 			if(args.human):
 				out_fmt = f"{f}\t{h_fmt(total)}\t{nseqs}\t{h_fmt(mean)}\t{h_fmt(median)}\t{h_fmt(mmax)}\t{h_fmt(N50)}\t{h_fmt(auN)}\n"
