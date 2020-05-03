@@ -94,7 +94,7 @@ def calc_stats(lengths, x=50, gsize = None):
 	else: 
 		total = gsize 
 	lens = sorted(lengths)[::-1]
-	mmax = lens[-1]
+	mmax = lens[0]
 	mean = total/n
 	auN = sum([x*x for x in lens])/total 
 	if(n % 2 == 0): 
