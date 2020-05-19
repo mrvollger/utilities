@@ -126,12 +126,19 @@ if __name__ == "__main__":
 	parser.add_argument('-g', help="calculate NG50, provide genome size, for hg use 3098794149 ", type=int, default=None)
 	parser.add_argument('-d', help="store args.d as true if -d",  action="store_true", default=False)
 	args = parser.parse_args()
-	
+
+	infiles = []
+	for path in args.infiles:
+		if(os.path.exists(path) and os.path.getsize(path) > 0 ):
+			infiles.append(path)
+		else:
+			sys.stderr.write("Skipping, because missing or empty: {}\n".format(path))
+
 	threads = min(args.threads, len(args.infiles))
 	str_qs = "\t".join( [ "{:g}%".format(x*100) for x in args.quantiles ] )
 	out = f"file\ttotalBp\tnSeqs\tmean\t{str_qs}\tmin\tmax\tN50\tauN\n"
 	with multiprocessing.Pool(threads) as pool: 
-		for i, rtn in enumerate(pool.imap(get_lengths, args.infiles)):
+		for i, rtn in enumerate(pool.imap(get_lengths, infiles)):
 			total, nseqs, mean, quantiles, mmin, mmax, N50, auN = calc_stats(rtn[1], args.quantiles, gsize=args.g) 
 			f = args.infiles[i]
 			if(args.human):
