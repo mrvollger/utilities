@@ -18,6 +18,8 @@ source conda.cfg
 
 
 ## SeqLengths.py ##
+
+This seems to need miniconda/4.5.12
 ```
 SeqLengths.py --help
 usage: SeqLengths.py [-h] [-f FOFN] [-o OUT] [-p PLOT] [--plotwith PLOTWITH]
@@ -43,6 +45,5 @@ optional arguments:
                         fasta/fastq files
 ```
 ![alt text](pngs/readlendist.png?raw=true "Example Read Length Distribution")
-
 
 
