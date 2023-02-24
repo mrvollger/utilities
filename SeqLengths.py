@@ -182,8 +182,8 @@ if args.plot is not None:
     # print(g)
     vv, ll = np.histogram(df.LogLength, bins=1000)
     for v, l in zip(vv, ll):
-        if 10 ** l > 14000 and 10 ** l < 18000:
-            print(v, 10 ** l)
+        if 10**l > 14000 and 10**l < 18000:
+            print(v, 10**l)
 
     # get maxes
     myy = plt.gca().get_ylim()[1]

@@ -40,7 +40,7 @@ for infile in args.infile:
     print(infile)
     print(
         "N50_Mbp\tTotal_Gbp\tN50\tTotal_bp\n{:.4f}\t{:.4f}\t{}\t{}".format(
-            N50 / 10 ** 6, totalSize / 10 ** 9, N50, totalSize
+            N50 / 10**6, totalSize / 10**9, N50, totalSize
         )
     )
     if args.d:
