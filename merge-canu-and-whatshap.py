@@ -53,6 +53,12 @@ def parse():
         help="Input file",
     )
     parser.add_argument(
+        "-c",
+        "--prioritize-canu",
+        help="keep phased canu reads even if they disagree with whatshap",
+        action="store_true",
+    )
+    parser.add_argument(
         "-o", "--output-prefix", help="Output prefix", default="canu-plus-whatshap"
     )
     parser.add_argument(
@@ -99,12 +105,13 @@ def main():
     )
     # count disagreements
     has_canu = merged_df.canu_hap != "unknown"
-    disagreements = (
-        merged_df[has_canu].canu_hap != merged_df[has_canu].merged_hap
-    ).sum()
+    disagreements = merged_df[has_canu].canu_hap != merged_df[has_canu].merged_hap
     logging.info(
-        f"{disagreements/merged_df[has_canu].shape[0]:.2%} of whatshap calls disagree with the phased canu calls. Prioritizing canu calls."
+        f"{disagreements.sum()/merged_df[has_canu].shape[0]:.2%} of whatshap calls disagree with the phased canu calls."
     )
+    if args.prioritize_canu:
+        logging.info("Prioritizing canu phasing.")
+
     # say # of reassignments
     phasing_added = (merged_df[~has_canu].merged_hap != "unknown").sum()
     logging.info(
@@ -117,8 +124,21 @@ def main():
     merged_df.loc[~has_canu, "hap"] = merged_df.merged_hap[~has_canu]
     # logging.info(f"Merged counts:\n{merged_df.hap.value_counts()}")
 
-    out = canu_df.merge(merged_df[["seq", "hap"]], on="seq", how="left")
+    # make final outputs
+    out = canu_df.merge(merged_df[["seq", "merged_hap", "hap"]], on="seq", how="left")
     out.loc[out.hap.isna(), "hap"] = out.canu_hap[out.hap.isna()]
+
+    # drop ambiguous reads from phasing
+    if not args.prioritize_canu:
+        known = (out.canu_hap.isin(["maternal", "paternal"])) & (
+            out.merged_hap.isin(["maternal", "paternal"])
+        )
+        disagreements = known & (out.canu_hap != out.merged_hap)
+        out.loc[disagreements, "hap"] = "unknown"
+        logging.info(
+            f"{disagreements.sum()/out.shape[0]:.2%} of total reads changed to unknown due to whatshap and canu disagreements"
+        )
+
     logging.info(f"Canu counts:\n{out.canu_hap.value_counts()}")
     logging.info(f"Final merged counts:\n{out.hap.value_counts()}")
     z = (out.canu_hap != "unknown").sum()
