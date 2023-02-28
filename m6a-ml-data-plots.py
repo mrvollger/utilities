@@ -42,41 +42,30 @@ def plot(args):
     )
 
     for strand in [0, 1]:
-        central_ip = (
-            255 * windows[labels & (strand == strands), 4, args.window_size // 2]
-        )
-        non_m6a = 255 * windows[~labels & (strand == strands), 4, args.window_size // 2]
-        p_base_ave = 255 * windows[labels & (strand == strands), 0:4, 5:10].mean(axis=0)
-        n_base_ave = 255 * windows[~labels & (strand == strands), 0:4, 5:10].mean(
-            axis=0
-        )
-        logging.info(f"Strand: {strand}")
+        for is_positive in [True, False]:
+            logging.info(f"Strand: {strand} and is m6A: {is_positive}")
+            use_labels = labels if is_positive else ~labels
+            central_ip = (
+                255
+                * windows[use_labels & (strand == strands), 4, args.window_size // 2]
+            )
+            logging.info(
+                f"Mean IPD at m6A:\t{central_ip.mean():.4g} +/- {central_ip.std():.4g}"
+            )
 
-        logging.info(
-            f"Mean IPD at m6A:\t{central_ip.mean():.4g} +/- {central_ip.std():.4g}"
-        )
-        logging.info(f"Base weights:\n{p_base_ave}")
-        logging.info(f"Base weights:\n{n_base_ave}")
-        logging.info(
-            f"Mean IPD at non-m6A:\t{non_m6a.mean():.4g} +/- {non_m6a.std():.4g}"
-        )
-        logging.info("")
-        pos = np.mean(255 * windows[labels & (strand == strands), 4, :], axis=0)
-        neg = np.mean(255 * windows[~labels & (strand == strands), 4, :], axis=0)
-        gp.plot(
-            pos,
-            _with="lines",
-            terminal="dumb 80,30",
-            unset="grid",
-            title=f"IPD at m6A on the {strand}",
-        )
-        gp.plot(
-            neg,
-            _with="lines",
-            terminal="dumb 80,30",
-            unset="grid",
-            title=f"IPD at non-m6A on the {strand}",
-        )
+            base_ave = 255 * windows[use_labels & (strand == strands), 0:4, 5:10].mean(
+                axis=0
+            )
+            logging.info(f"Base weights:\n{base_ave}")
+            logging.info("")
+            ipd = np.mean(255 * windows[use_labels & (strand == strands), 4, :], axis=0)
+            gp.plot(
+                ipd,
+                _with="lines",
+                terminal="dumb 80,30",
+                unset="grid",
+                title=f"IPD at {is_positive} m6A on the {strand}",
+            )
 
 
 def parse():
