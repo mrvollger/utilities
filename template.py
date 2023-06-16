@@ -1,23 +1,38 @@
 #!/usr/bin/env python
-import argparse
-import os
+import defopt
 import sys
+import logging
+from pathlib import Path
+from typing import Optional
 
-# global var for inputs
-args = None
+
+def main(
+    infile: Optional[Path] = None,
+    outfile: Optional[Path] = None,
+    *,
+    verbose: int = 0,
+):
+    """
+    Author Mitchell R. Vollger
+
+    :param infile: Input file, stdin by default
+    :param outfile: Output file, stdout by default
+    :param count: Number of times to display the greeting
+    :param verbose: Set the logging level of the function
+    """
+    if infile is None:
+        infile = sys.stdin
+    if outfile is None:
+        outfile = sys.stdout
+
+    logger = logging.getLogger()
+    log_format = "[%(levelname)s][Time elapsed (ms) %(relativeCreated)d]: %(message)s"
+    log_level = 10 * (3 - verbose)
+    logging.basicConfig(format=log_format)
+    logger.setLevel(log_level)
+
+    return 0
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("infile", help="positional input")
-    parser.add_argument("-s", "--string", help="string option")
-    parser.add_argument("-n", "--number", help="numeric option", type=int, default=5)
-    parser.add_argument(
-        "-l", "--list", nargs="*", help="list with zero or more entries"
-    )
-    parser.add_argument("-l2", "--list2", nargs="+", help="list one or more entries")
-    parser.add_argument(
-        "-d", help="store args.d as true if -d", action="store_true", default=False
-    )
-    args = parser.parse_args()
+    defopt.run(main, show_types=True, version="0.0.1")

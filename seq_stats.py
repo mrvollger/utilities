@@ -7,6 +7,7 @@ from functools import partial
 import pysam
 import re
 import numpy as np
+import tqdm 
 
 ALN_PAT = re.compile(".*\.(bam|sam|sam.gz|cram)")
 
@@ -41,8 +42,8 @@ def read_bam(f):
     try:
         names = []
         lengths = []
-        bam = pysam.AlignmentFile(f, check_sq=False)
-        for rec in bam.fetch(until_eof=True):
+        bam = pysam.AlignmentFile(f, check_sq=False, threads=8)
+        for rec in tqdm.tqdm(bam.fetch(until_eof=True)):
             if rec.is_unmapped or (not rec.is_secondary and not rec.is_supplementary):
                 names.append(rec.query_name)
                 lengths.append(len(rec.query_sequence))
