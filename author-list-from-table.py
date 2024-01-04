@@ -47,15 +47,15 @@ if __name__ == "__main__":
     df = pd.read_csv(args.infile, sep="\t")
     df[MIDDLE] = df[MIDDLE].fillna("")
 
-    df["AFFS"] = df[AFF].str.split(";")
+    df["AFFS"] = df[AFF].str.split(";").str.strip()
     aff_nums = {}
     for aff in df[AFF]:
-        affs = aff.split(";")
+        affs = [x.strip() for x in aff.split(";")]
         for aff in affs:
             if aff not in aff_nums:
                 aff_nums[aff] = len(aff_nums) + 1
     df["nums"] = df[AFF].apply(
-        lambda x: ",".join([f"{aff_nums[aff]}" for aff in x.split(";")])
+        lambda x: ",".join([f"{aff_nums[aff.strip()]}" for aff in x.split(";")])
     )
     # first authors =
     if FIRSTS not in df.columns:
