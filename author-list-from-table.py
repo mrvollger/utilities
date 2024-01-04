@@ -58,6 +58,8 @@ if __name__ == "__main__":
         lambda x: ",".join([f"{aff_nums[aff]}" for aff in x.split(";")])
     )
     # first authors =
+    if FIRSTS not in df.columns:
+        df[FIRSTS] = ""
 
     df["Name"] = (
         (
