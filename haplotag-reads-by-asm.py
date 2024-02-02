@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-import defopt
-import sys
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
+
+import defopt
 import pysam
 from tqdm import tqdm
 

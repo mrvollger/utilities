@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-import sys
+import pysam
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("infile", help="positional input")
@@ -8,9 +8,6 @@ parser.add_argument(
     "-d", help="store args.d as true if -d", action="store_true", default=False
 )
 args = parser.parse_args()
-
-import pysam
-
 
 # soft clip
 S = 4

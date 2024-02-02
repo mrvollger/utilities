@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import argparse
+import multiprocessing
 import sys
+from multiprocessing import current_process
+
+import pysam
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("infile", nargs="?", help="input bam file")
@@ -8,10 +12,6 @@ parser.add_argument("--prefix", default="chunk")
 parser.add_argument("-t", "--threads", help="threads to use", type=int, default=1)
 parser.add_argument("-d", action="store_true", default=False)
 args = parser.parse_args()
-
-import pysam
-import multiprocessing
-from multiprocessing import Process, Value, Array, Lock, current_process
 
 infile = pysam.AlignmentFile(args.infile)
 outfs = {
