@@ -122,7 +122,6 @@ def perId(matches, mismatch, ins, dele, insEvent, delEvent):
 
 
 def formatRead(read):
-
     if read.flag == 4:
         return None
 

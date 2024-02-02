@@ -78,7 +78,6 @@ def rle(opts):
     idx = 0
     for cur in opts:
         if cur != pre and pre is not None:
-
             # if cur is none we are at tehn end and need to adjsut our counts by 1
             if cur is None:
                 count -= 1
@@ -93,7 +92,6 @@ def rle(opts):
 
 
 def change_alnseg(read, all_opts, q_st, q_en, r_st, r_en):
-
     # subset sequence
     read.seq = read.seq[q_st:q_en]
 
@@ -151,7 +149,6 @@ def trim_read(read, contig, start, end):
 
 
 if __name__ == "__main__":
-
     inbam = pysam.AlignmentFile(args.bam)
     out = pysam.AlignmentFile(args.outfile, "w", template=inbam)
     counter = 0

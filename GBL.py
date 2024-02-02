@@ -7,7 +7,6 @@ linkFormat = "https://genometest2.gs.washington.edu/cgi-bin/hgTracks?db=hg38&las
 
 class Link:
     def __init__(self, pos=None, TAB=None):
-
         if pos is not None:
             self.input = pos
             self.parsePos()

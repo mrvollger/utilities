@@ -21,7 +21,6 @@ reads_in_this_chunk = 0
 outfile = pysam.AlignmentFile(outfile_pattern.format(chunk), "wb", template=infile)
 
 for read in infile.fetch(until_eof=True):
-
     # write to output
     outfile.write(read)
     reads_in_this_chunk += 1

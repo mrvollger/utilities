@@ -42,6 +42,7 @@ import multiprocessing as mp
 
 # global varibles
 
+
 # convert h5 to fasta
 def runPls2Fasta(reads, outreads):
     cmd = (

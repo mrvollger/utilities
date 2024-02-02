@@ -38,7 +38,7 @@ def make_hist(data, args):
         bins = np.logspace(LMIN, LMAX, LMAX - LMIN + 1)
     if args.binwidth:
         bins = np.arange(np.floor(MIN), np.ceil(MAX) + args.binwidth, args.binwidth)
-        #print(bins)
+        # print(bins)
 
     inds = np.digitize(data, bins)
     maxbincount = np.max(np.bincount(inds))
@@ -57,14 +57,14 @@ def make_hist(data, args):
         text = "*" * int(n)
         if int(n) - n != 0:
             text += "."
-        #print(b, n, count)
+        # print(b, n, count)
         if b + 1 >= bins.shape[0]:
             sys.stdout.write(
                 fmt.format(round(bins[b], 2), round(bins[b], 2), count, text)
             )
         else:
             sys.stdout.write(
-                fmt.format(round(bins[b], 2), round(bins[b+1], 2), count, text)
+                fmt.format(round(bins[b], 2), round(bins[b + 1], 2), count, text)
             )
 
 

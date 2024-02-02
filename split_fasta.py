@@ -12,9 +12,7 @@ if __name__ == "__main__":
         description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument("infile", help="positional input")
-    parser.add_argument(
-        "-n", help="length of each window", type=int, default=5 * 10**6
-    )
+    parser.add_argument("-n", help="length of each window", type=int, default=5 * 10**6)
     parser.add_argument(
         "-d", help="store args.d as true if -d", action="store_true", default=False
     )

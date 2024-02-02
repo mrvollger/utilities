@@ -7,7 +7,7 @@ from functools import partial
 import pysam
 import re
 import numpy as np
-import tqdm 
+import tqdm
 
 ALN_PAT = re.compile(".*\.(bam|sam|sam.gz|cram)")
 
