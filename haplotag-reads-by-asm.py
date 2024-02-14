@@ -13,6 +13,8 @@ def run(bam, obam, hap1_tag="hap1", hap2_tag="hap2", min_mapq=0):
     for rec in tqdm(bam.fetch(until_eof=True)):
         if rec.is_unmapped or rec.mapping_quality <= min_mapq:
             rec.set_tag("HP", None)
+        elif hap1_tag in rec.reference_name and hap2_tag in rec.reference_name:
+            rec.set_tag("HP", None)
         elif hap1_tag in rec.reference_name:
             rec.set_tag("HP", 1)
         elif hap2_tag in rec.reference_name:
