@@ -68,7 +68,6 @@ def get_job(node, partition, cores, mem, account, time, odir):
 
 
 def main(
-    outfile: Optional[Path] = None,
     *,
     node: Optional[str] = None,
     partition: str = "compute-ultramem",
@@ -82,12 +81,12 @@ def main(
     """
     Author Mitchell R. Vollger
 
-    :param node: The node to request
-    :param partition: The partition to request
     :param cores: The number of cores to request
     :param mem: The amount of memory to request
-    :param account: The account to use
     :param time: The amount of time to request, if not provided will use the time until the next maintenance window.
+    :param partition: The partition to request
+    :param account: The account to use
+    :param node: The node to request
     :param odir: The output directory to write the output to
     """
     logger = logging.getLogger()
