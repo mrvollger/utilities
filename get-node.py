@@ -4,8 +4,6 @@ import sys
 import logging
 from pathlib import Path
 from typing import Optional
-
-# imports for running shell commands
 import subprocess
 import math
 
@@ -59,8 +57,9 @@ def get_job(node, partition, cores, mem, account, time, odir):
     run_cmd_and_get_stdout(
         f"printf '#!/bin/bash\nsleep {time+1}h\n' > {odir}/tmp_node_script.sh"
     )
+    comment = "'requested by get-node.py'"
 
-    cmd = f"sbatch --output {odir}/tmp_node_script.out --parsable -A {account} --mem={mem} --time={time}:00:00 -p {partition} -c {cores} {odir}/tmp_node_script.sh"
+    cmd = f"sbatch --output {odir}/tmp_node_script.out --parsable -A {account} --mem={mem} --time={time}:00:00 -p {partition} -c {cores} {odir}/tmp_node_script.sh  --comment={comment}"
 
     logging.info(f"sbatch request:\n{cmd}")
     job_id = run_cmd_and_get_stdout(cmd)
