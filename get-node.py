@@ -29,11 +29,17 @@ def get_allowed_time():
     """
     # find the time until the next reservation
     nextres = run_cmd_and_get_stdout(
-        "scontrol show res | head -n1 | awk '{print $2}' | cut -f2 -d= | xargs -I {} date +%s --date \"{}\""
+        "scontrol show res | grep Maintenance | head -n1 | awk '{print $2}' | cut -f2 -d= | xargs -I {} date +%s --date \"{}\""
     )
     cur_time = run_cmd_and_get_stdout("date +%s")
     try:
         time_until = (int(nextres) - int(cur_time)) / 3600
+        if time_until < 0:
+            nextres = run_cmd_and_get_stdout(
+                "scontrol show res | grep ReservationName | grep Maintenance | head -n2 | tail -n 1 | awk '{print $2}' | cut -f2 -d= | xargs -I {} date +%s --date \"{}\""
+            )
+            time_until = (int(nextres) - int(cur_time)) / 3600
+        logging.info(f"next res minus cur time: {nextres/3600} - {cur_time/3600}")
     except:
         logging.error(
             f"Could not get time until next reservation: {nextres} - {cur_time}"
@@ -70,8 +76,8 @@ def main(
     *,
     node: Optional[str] = None,
     partition: str = "compute-ultramem",
-    cores: int = 20,
-    mem: str = "400G",
+    cores: int = 4,
+    mem: str = "100G",
     account: str = "stergachislab",
     odir: Path = Path("~/get-node-output"),
     time: Optional[str] = None,
