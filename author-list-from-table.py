@@ -55,7 +55,9 @@ if __name__ == "__main__":
             if aff not in aff_nums:
                 aff_nums[aff] = len(aff_nums) + 1
     df["nums"] = df[AFF].apply(
-        lambda x: ",".join([f"{aff_nums[aff.strip()]}" for aff in x.split(";")])
+        lambda x: ",".join(
+            [str(x) for x in sorted([aff_nums[aff.strip()] for aff in x.split(";")])]
+        )
     )
     # first authors =
     if FIRSTS not in df.columns:
