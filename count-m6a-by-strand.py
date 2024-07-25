@@ -23,8 +23,8 @@ def run(bam, nrows):
                 read_counts[key] += 1
 
     print("Strand\tCount\tReadCount")
-    print(f"A+a\t{counts[A]:,}\t{idx}")
-    print(f"T-a\t{counts[T]:,}\t{idx}")
+    print(f"A+a\t{counts[A]:,}\t{read_counts[A]:,}")
+    print(f"T-a\t{counts[T]:,}\t{read_counts[T]:,}")
 
 
 def main(
