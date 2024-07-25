@@ -75,7 +75,7 @@ def get_job(node, partition, cores, mem, account, time, odir):
 def main(
     *,
     node: Optional[str] = None,
-    partition: str = "compute-ultramem",
+    partition: str = "compute,cpu-g2,cpu-g2-mem2x",
     cores: int = 4,
     mem: str = "100G",
     account: str = "stergachislab",
