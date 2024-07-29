@@ -9,7 +9,7 @@ import re
 import numpy as np
 import tqdm
 
-ALN_PAT = re.compile(".*\.(bam|sam|sam.gz|cram)")
+ALN_PAT = re.compile(r".*\.(bam|sam|sam.gz|cram)")
 
 # global var for inputs
 args = None
@@ -102,7 +102,7 @@ def get_lengths(f):
     if re.match(ALN_PAT, f):
         rtn = read_bam(f)
         return rtn
-    elif re.match(".*\.bed", f):
+    elif re.match(r".*\.bed", f):
         return read_bed(f)
 
     # try reading by index
