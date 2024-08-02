@@ -50,7 +50,7 @@ def get_allowed_time():
     return time_req
 
 
-def get_job(node, partition, cores, mem, account, time, odir):
+def get_job(node, partition, cores, mem, account, time, odir, tmp):
     if time is None:
         time = get_allowed_time()
 
@@ -65,7 +65,7 @@ def get_job(node, partition, cores, mem, account, time, odir):
     )
     comment = "'requested by get-node.py'"
 
-    cmd = f"sbatch --output {odir}/tmp_node_script.out --parsable -A {account} --mem={mem} --time={time}:00:00 -p {partition} -c {cores} {odir}/tmp_node_script.sh  --comment={comment}"
+    cmd = f"sbatch --output {odir}/tmp_node_script.out --parsable -A {account} --tmp={tmp} --mem={mem} --time={time}:00:00 -p {partition} -c {cores} {odir}/tmp_node_script.sh  --comment={comment}"
 
     logging.info(f"sbatch request:\n{cmd}")
     job_id = run_cmd_and_get_stdout(cmd)
@@ -78,6 +78,7 @@ def main(
     partition: str = "compute,cpu-g2,cpu-g2-mem2x",
     cores: int = 4,
     mem: str = "100G",
+    tmp: str = "10G",
     account: str = "stergachislab",
     odir: Path = Path("~/get-node-output"),
     time: Optional[str] = None,
@@ -100,7 +101,7 @@ def main(
     logging.basicConfig(format=log_format)
     logger.setLevel(log_level)
 
-    get_job(node, partition, cores, mem, account, time, odir)
+    get_job(node, partition, cores, mem, account, time, odir, tmp)
 
     return 0
 
