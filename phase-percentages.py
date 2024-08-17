@@ -11,8 +11,11 @@ from tqdm import tqdm
 
 def run(bam, min_mapq=0):
     h1_count = 0
+    h1_bp_count = 0
     h2_count = 0
+    h2_bp_count = 0
     other_count = 0
+    other_bp_count = 0
     for rec in tqdm(bam.fetch(until_eof=True)):
         if rec.is_secondary or rec.is_supplementary:
             continue
@@ -21,15 +24,21 @@ def run(bam, min_mapq=0):
             hp = rec.get_tag("HP")
             if hp == 1:
                 h1_count += 1
+                h1_bp_count += rec.query_length
             elif hp == 2:
                 h2_count += 1
+                h2_bp_count += rec.query_length
         else:
             other_count += 1
+            other_bp_count += rec.query_length
 
     total = h1_count + h2_count + other_count
     phased = h1_count + h2_count
     print(f"{h1_count}, {h2_count}, {other_count}, {total}")
     print(f"{phased / total:%}")
+    total_bp = h1_bp_count + h2_bp_count + other_bp_count
+    print(f"{h1_bp_count}, {h2_bp_count}, {other_bp_count}, {total_bp}")
+    print(f"{(h1_bp_count + h2_bp_count) / total_bp:%}")
 
 
 def main(
