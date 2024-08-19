@@ -30,7 +30,7 @@ def main(
     *,
     hap1_tag: str = "haplotype1",
     hap2_tag: str = "haplotype2",
-    min_mapq: int = 1,
+    min_mapq: int = 0,
     threads: int = 8,
     verbose: int = 0,
 ):
