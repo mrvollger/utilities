@@ -56,7 +56,7 @@ def main(
 
     # read in the VCF file with pysam
     vcf = pysam.VariantFile(vcf, threads=threads)
-    o_vcf = pysam.VariantFile(o_vcf, "wb", header=vcf.header, threads=threads)
+    o_vcf = pysam.VariantFile(o_vcf, "w", header=vcf.header, threads=threads)
     logging.info(f"Reading in VCF file {vcf}")
     count = 0
     # loop over the VCF file
