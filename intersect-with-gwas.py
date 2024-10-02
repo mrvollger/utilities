@@ -17,7 +17,7 @@ def main(
     verbose: int = 3,
     threads: int = 8,
     max_p_values: float = 5e-8,
-    max_1kg_af: float = 0.1,
+    max_1kg_af: float = 1.0,
 ):
     """
     Author Mitchell R. Vollger
@@ -41,17 +41,18 @@ def main(
     # filter for rows where the rsID starts with rs
     # filter out rsIDs that don't end with a number
     gwas = gwas[
-        gwas["rsID"].str.startswith("rs")
-        & gwas["rsID"].str[2:].str.isnumeric()
-        & (gwas["P_VAL"] < max_p_values)
+        gwas["rsID"].str.startswith("rs") & gwas["rsID"].str[2:].str.isnumeric()
     ]
+    logging.info(f"Filtered to {len(gwas):,} for formatting of rsIDs")
+    gwas = gwas[(gwas["P_VAL"] < max_p_values)]
+    logging.info(f"Filtered to {len(gwas):,} GWAS SNPs with p-value < {max_p_values}")
     # strip the leading rs from the rsID and convert to an integer
     gwas["rsID"] = gwas["rsID"].str.lstrip("rs").astype(int)
     # filter for unique rsIDs
     gwas = gwas.drop_duplicates("rsID")
     # make the index the rsID
     gwas = gwas.set_index("rsID")
-    logging.info(f"Filtered to {len(gwas):,} GWAS SNPs")
+    logging.info(f"Filtered to {len(gwas):,} unique GWAS SNPs (rsID and risk allele)")
 
     # read in the VCF file with pysam
     vcf = pysam.VariantFile(vcf, threads=threads)
