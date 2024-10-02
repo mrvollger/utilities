@@ -73,7 +73,7 @@ def main(
                     continue
                 count += 1
                 o_vcf.write(rec)
-
+    o_vcf.close()
     logging.info(f"Found {count:,} GWAS risk alleles in VCF")
     return 0
 
