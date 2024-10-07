@@ -16,7 +16,7 @@ def main(
     *,
     verbose: int = 3,
     threads: int = 8,
-    max_p_values: float = 5e-8,
+    max_p_value: float = 5e-8,
     max_1kg_af: float = 1.0,
 ):
     """
@@ -44,8 +44,10 @@ def main(
         gwas["rsID"].str.startswith("rs") & gwas["rsID"].str[2:].str.isnumeric()
     ]
     logging.info(f"Filtered to {len(gwas):,} for formatting of rsIDs")
-    gwas = gwas[(gwas["P_VAL"] < max_p_values)]
-    logging.info(f"Filtered to {len(gwas):,} GWAS SNPs with p-value < {max_p_values}")
+
+    # if p-values are greater than 1 they are log transformed, so we should skip the filter
+    gwas = gwas[(gwas["P_VAL"] < max_p_value)]
+    logging.info(f"Filtered to {len(gwas):,} GWAS SNPs with p-value < {max_p_value}")
     # strip the leading rs from the rsID and convert to an integer
     gwas["rsID"] = gwas["rsID"].str.lstrip("rs").astype(int)
     # filter for unique rsIDs
