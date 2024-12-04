@@ -1,0 +1,14 @@
+[project]
+authors = ["Mitchell R. Vollger <mvollger@gmai.com>"]
+channels = ["conda-forge", "bioconda"]
+description = "Add a short description here"
+name = "utilities"
+platforms = ["osx-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+defopt = "*"
+pysam = { version="0.22.*", channel = "bioconda" }
+samtools = { version = "1.21.*", channel = "bioconda" }
