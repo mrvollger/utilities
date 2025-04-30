@@ -9,6 +9,10 @@ version = "0.1.0"
 [tasks]
 
 [dependencies]
-defopt = "*"
-pysam = { version="0.22.*", channel = "bioconda" }
+defopt = ">=6.4.0,<7"
+pysam = ">=0.23.0,<0.24"
 samtools = { version = "1.21.*", channel = "bioconda" }
+pandas = ">=2.2.3,<3"
+numpy = ">=2.2.5,<3"
+numba = ">=0.61.2,<0.62"
+networkx = ">=3.4.2,<4"
