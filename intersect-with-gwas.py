@@ -70,7 +70,8 @@ def main(
             alt = rec.alts[0]
             if risk_alt == alt:
                 # get the 1KG allele frequency
-                af = float(rec.info.get("FREQ", ("1000Genomes:1.0"))[0].split(":")[1])
+                af_list = rec.info.get("FREQ", ("1000Genomes:1.0"))[0].split(":")
+                af = float(af_list[1])
                 if af > max_1kg_af:
                     continue
                 count += 1
