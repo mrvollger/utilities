@@ -71,6 +71,8 @@ def main(
             if risk_alt == alt:
                 # get the 1KG allele frequency
                 af_list = rec.info.get("FREQ", ("1000Genomes:1.0"))[0].split(":")
+                if len(af_list) < 2:
+                    continue
                 af = float(af_list[1])
                 if af > max_1kg_af:
                     continue
