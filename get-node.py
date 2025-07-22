@@ -81,7 +81,7 @@ def main(
     tmp: str = "10G",
     account: str = "stergachislab",
     odir: Path = Path("~/get-node-output"),
-    time: Optional[str] = None,
+    time: Optional[int] = None,
     verbose: int = 1,
 ):
     """
